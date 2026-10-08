@@ -1,0 +1,71 @@
+server:
+  port: 9093
+
+spring:
+  application:
+    name: digital-wallet-auth-service
+
+  profiles:
+    active: local
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/digital_wallet_auth_db
+    username: postgres
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    open-in-view: false
+
+  liquibase:
+    change-log: classpath:changelog-master.yaml
+
+clients:
+  user-service:
+    url: http://localhost:9091
+
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 2000
+        readTimeout: 3000
+
+jwt:
+  secret: ${JWT_SECRET:}
+  access-token-expiration-ms: 900000
+  refresh-token-expiration-ms: 604800000
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      user-service:
+        registerHealthIndicator: true
+        slidingWindowSize: 10
+        failureRateThreshold: 50
+        waitDurationInOpenState: 10s
+        permittedNumberOfCallsInHalfOpenState: 3
+        ignoreExceptions:
+          - com.example.digitalwalletauthservice.exception.UserServiceRejectedException
+
+auth:
+  max-failed-login-attempts: 5
+  lock-duration-minutes: 15
+  password-reset-ttl-minutes: 30
+  email-verification-ttl-minutes: 1440
+  require-email-verification: false
+  cleanup-retention-days: 7
+  cleanup-cron: "0 0 3 * * *"
+  bootstrap-admin:
+    email: ${BOOTSTRAP_ADMIN_EMAIL:}
+    password: ${BOOTSTRAP_ADMIN_PASSWORD:}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      probes:
+        enabled: true
