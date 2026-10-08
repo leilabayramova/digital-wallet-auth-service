@@ -1,0 +1,47 @@
+databaseChangeLog:
+  - changeSet:
+      id: 003-add-account-security-columns
+      author: leila
+
+      changes:
+        - addColumn:
+            tableName: credentials
+            columns:
+              - column:
+                  name: enabled
+                  type: BOOLEAN
+                  defaultValueBoolean: true
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: email_verified
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: failed_login_attempts
+                  type: INT
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: locked_until
+                  type: TIMESTAMP
+
+      rollback:
+        - dropColumn:
+            tableName: credentials
+            columnName: locked_until
+        - dropColumn:
+            tableName: credentials
+            columnName: failed_login_attempts
+        - dropColumn:
+            tableName: credentials
+            columnName: email_verified
+        - dropColumn:
+            tableName: credentials
+            columnName: enabled

@@ -1,0 +1,73 @@
+databaseChangeLog:
+  - changeSet:
+      id: 005-create-one-time-tokens-table
+      author: leila
+
+      changes:
+        - createTable:
+            tableName: one_time_tokens
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: pk_one_time_tokens
+                    nullable: false
+
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: type
+                  type: VARCHAR(30)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: token_hash
+                  type: VARCHAR(64)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: expires_at
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: used
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+
+        - addUniqueConstraint:
+            tableName: one_time_tokens
+            columnNames: token_hash
+            constraintName: uq_one_time_tokens_token_hash
+
+        - createIndex:
+            tableName: one_time_tokens
+            indexName: idx_one_time_tokens_user_id_type
+            columns:
+              - column:
+                  name: user_id
+              - column:
+                  name: type
+
+      rollback:
+        - dropTable:
+            tableName: one_time_tokens
