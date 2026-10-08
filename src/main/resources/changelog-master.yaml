@@ -1,0 +1,11 @@
+databaseChangeLog:
+  - include:
+      file: liquibase/changes/001-create-credentials-table.yaml
+  - include:
+      file: liquibase/changes/002-create-refresh-tokens-table.yaml
+  - include:
+      file: liquibase/changes/003-add-account-security-columns.yaml
+  - include:
+      file: liquibase/changes/004-create-refresh-tokens-user-id-index.yaml
+  - include:
+      file: liquibase/changes/005-create-one-time-tokens-table.yaml
